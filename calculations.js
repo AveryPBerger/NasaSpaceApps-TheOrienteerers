@@ -21,10 +21,14 @@ function CalculateDistance(spaceobj) {
   for (let i = 0; i < 1000; i++){
     coordinates.push([]);
 
-    
+
     coordinates[i][x] = spaceobj.pos[x];
     coordinates[i][y] = spaceobj.pos[y];
     
+    if(coordinates[y] <= 700000){
+      console.log("Game Over");
+      return;
+    }
 
     spaceobj.r = (Math.sqrt(coordinates[i][x]**2 + coordinates[i][y]**2));
     let a = (GravitationalC * EarthsMass) / (spaceobj.r**2);
@@ -36,45 +40,14 @@ function CalculateDistance(spaceobj) {
     deltaX = (xAcceleration * (timeInt**2) /2 + spaceobj.Vo[x] * timeInt);
     deltaY = (yAcceleration * (timeInt**2) /2 + spaceobj.Vo[y] * timeInt);
   
-    spaceobj.Vo[x] = ((spaceobj.Vo[x]**2) + 2 * xAcceleration * deltaX) **0.5 * -1;
-    spaceobj.Vo[y] = ((spaceobj.Vo[y]**2) + 2 * yAcceleration * deltaY) **0.5 * -1;
+    spaceobj.Vo[x] = 2*deltaX/timeInt - spaceobj.Vo[x];
+    spaceobj.Vo[y] = 2*deltaY/timeInt - spaceobj.Vo[y];
     
     spaceobj.pos[x] += deltaX;
     spaceobj.pos[y] += deltaY;
+
+
   }
   console.log(coordinates);
-}
-
-//5.972 × 10^24
-function Trajectory(spaceobj) {
-  const mass = spaceobj.mass;
-  let trajectory = [];
-
-  for (let i = 0; i < 100; i++) {
-    trajectory.push([]);
-
-
-    let accelaration = EarthsMass*GravitationalC / (spaceobj.r ** squared);
-
-    // console.log("a: " + a + " accelaration: " + accelaration);
-
-    let angle = Math.PI + Math.atan(spaceobj.pos[y]/spaceobj.pos[x]);
-    let xAcceleration = accelaration * Math.cos(angle);
-    let yAcceleration = accelaration * Math.sin(angle);
-
-    //finds delta x,y
-    trajectory[i][x] = (spaceobj.Vo[x] + xAcceleration / 2);
-    trajectory[i][y] = (spaceobj.Vo[y] + yAcceleration / 2);
-   
-   
-    spaceobj.r = CalculateDistance(trajectory[i]);
-    spaceobj.pos[x] += trajectory[i][x];
-    spaceobj.pos[y] += trajectory[i][y];
-
-    spaceobj.Vo[x] += xAcceleration/2; 
-    spaceobj.Vo[y] += yAcceleration/2;
-    console.log(spaceobj.r);
-    console.log(accelaration);
-  }
-  return trajectory;
+  return (spaceobj.pos[x],spaceobj.pos[y]);
 }
